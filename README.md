@@ -4,17 +4,10 @@ A Java OOP group project simulating road traffic with vehicles, intersections, a
 
 ## Team
 
-| Name | Pair | Responsibility |
-|------|------|----------------|
-| Ali | A | Core Engine + Observer pattern |
-| Henry | A | Core Engine + Observer pattern |
-| Oscar | A | Core Engine + Observer pattern |
-| Callum | B | Road Network + Factory pattern |
-| Jubril | B | Road Network + Factory pattern |
-| Ben | C | Vehicles |
-| Jacob | C | Vehicles |
-| Addrita | D | Traffic Lights + Intersections |
-| Cam | D | Traffic Lights + Intersections |
+| Name |
+|------|
+| Henry |
+| Jacob |
 
 ## Project Structure
 
