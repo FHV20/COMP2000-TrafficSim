@@ -3,6 +3,7 @@ package trafficsim.view;
 import trafficsim.engine.SimulationEngine;
 import trafficsim.engine.SimulationObserver;
 import trafficsim.engine.Statistics;
+import trafficsim.engine.TrafficFlowSummary;
 import trafficsim.model.road.BusStop;
 import trafficsim.model.road.Intersection;
 import trafficsim.model.road.Lane;
@@ -263,8 +264,11 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
     }
 
     private void drawDashboard(Graphics2D graphics, List<Vehicle> vehicles) {
+        Map<Direction, TrafficFlowSummary> directionalFlow =
+                Statistics.flowByDirection(vehicles);
+
         graphics.setColor(new Color(12, 18, 23, 215));
-        graphics.fillRoundRect(18, 16, 324, 92, 14, 14);
+        graphics.fillRoundRect(18, 16, 660, 92, 14, 14);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         graphics.drawString("CITY FLOW", 32, 40);
@@ -276,6 +280,22 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
                 Statistics.averageSpeed(vehicles), Statistics.stoppedCount(vehicles)), 32, 76);
         graphics.drawString(String.format("run seed %016X",
                 engine.getRunSeed()), 32, 94);
+
+        graphics.setColor(new Color(255, 255, 255, 55));
+        graphics.drawLine(352, 28, 352, 96);
+
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
+        graphics.drawString("DIRECTIONAL FLOW", 368, 39);
+        graphics.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+        int lineY = 54;
+        for (Direction direction : Direction.values()) {
+            TrafficFlowSummary flow = directionalFlow.get(direction);
+            graphics.drawString(String.format("%-5s %3d total  %3d queued  avg %5.2f",
+                    direction, flow.totalVehicles(), flow.queuedVehicles(),
+                    flow.averageSpeed()), 368, lineY);
+            lineY += 13;
+        }
 
         graphics.setColor(new Color(12, 18, 23, 185));
         graphics.fillRoundRect(18, getHeight() - 45, 170, 28, 12, 12);
