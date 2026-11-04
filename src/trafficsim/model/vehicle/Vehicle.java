@@ -23,7 +23,6 @@ public abstract sealed class Vehicle
 
     private static Random noise = new Random();
 
-    /** Allows a caller to make driver slowdown noise deterministic. */
     public static void seedNoise(long seed) { noise = new Random(seed); }
 
     protected Vehicle(double x, double y, double maxSpeed, double length,
@@ -39,13 +38,9 @@ public abstract sealed class Vehicle
         this.direction = direction;
     }
 
-    /** Accelerate or brake according to the current sensor snapshot, then move straight. */
     public void move(SensorReading r) {
-        // Keep one unit spare: a zero-distance reading means the vehicle must stop now.
         double obstacle = r.effectiveStopDistance() - 1.0;
-        // The closest hazard limits speed, but a vehicle can never exceed its own maximum.
         double target = Math.min(maxSpeed, Math.max(0, obstacle));
-        // Driver profiles change acceleration, not the physical safety distance.
         double effectiveAccel = accelStep * profile.accelMultiplier();
 
         if (target < speed) {
@@ -79,20 +74,14 @@ public abstract sealed class Vehicle
     }
     public boolean respectsRedLight() { return stopsAtRedLight(); }
 
-    // -- back-reference plumbing --------------------------------------------
-
     /** Called from {@code Lane.addVehicle} — do not call directly. */
     public void attachTo(Lane lane) { this.lane = lane; }
     public Lane getLane() { return lane; }
     public Road getRoad() { return lane == null ? null : lane.getRoad(); }
 
-    // -- driver profile ------------------------------------------------------
-
     public void setDriverProfile(DriverProfile profile) {
         this.profile = profile == null ? DriverProfile.NORMAL : profile;
     }
-
-    // -- getters -------------------------------------------------------------
 
     public double getSpeed() { return speed; }
     public double getX() { return x; }

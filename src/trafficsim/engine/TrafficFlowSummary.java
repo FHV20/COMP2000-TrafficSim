@@ -1,8 +1,6 @@
 package trafficsim.engine;
 
-/**
- * A snapshot of the traffic travelling in one direction.
- */
+/** Traffic totals for one direction. */
 public record TrafficFlowSummary(
         long totalVehicles,
         long queuedVehicles,

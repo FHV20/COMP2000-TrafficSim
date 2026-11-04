@@ -67,7 +67,6 @@ public final class NetworkLoader {
                         if (parts.length != 6) {
                             throw new InvalidNetworkException("line " + ln + ": INTERSECTION expects 5 args");
                         }
-                        // Alternate starting axes so neighbouring lights are staggered.
                         Axis start = (intersectionIndex++ % 2 == 0) ? Axis.HORIZONTAL : Axis.VERTICAL;
                         TrafficLight light = new TrafficLight(
                                 Integer.parseInt(parts[3]),
@@ -154,7 +153,6 @@ public final class NetworkLoader {
         network.addBusStop(new BusStop(559, 430, "University", Direction.SOUTH));
     }
 
-    /** Connect each intersection to every road whose line passes through it. */
     private static void wireIntersections(RoadNetwork network) {
         for (Intersection ix : network.getIntersections()) {
             for (Road r : network.getRoads()) {

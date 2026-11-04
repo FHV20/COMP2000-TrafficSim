@@ -5,10 +5,7 @@ import trafficsim.model.light.TrafficLight;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A node where roads meet. The current simulation uses signalised
- * intersections only.
- */
+/** Where roads meet. */
 public abstract sealed class Intersection
         permits SignalisedIntersection {
 
@@ -25,7 +22,6 @@ public abstract sealed class Intersection
     public List<Road> getConnectedRoads() { return connectedRoads; }
     public void connect(Road r) { connectedRoads.add(r); }
 
-    /** Advance the traffic light state. */
     public abstract void update();
 
     public abstract TrafficLight getLight();
