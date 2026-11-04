@@ -56,10 +56,6 @@ public class RoadNetwork {
         return Collections.unmodifiableList(busStops);
     }
 
-    /**
-     * Calculates the bounding box containing every road endpoint.
-     * This is used for vehicle spawn and despawn edge detection.
-     */
     public Rectangle getBounds() {
         if (roads.isEmpty()) {
             return new Rectangle(0, 0, 0, 0);

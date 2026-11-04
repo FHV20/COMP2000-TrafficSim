@@ -1,13 +1,6 @@
 package trafficsim.engine;
 
-/**
- * Immutable snapshot of what a vehicle can "see" for the current tick.
- * Computed in the read-only sensor phase of {@link SimulationEngine#step()}
- * and consumed by {@code Vehicle.move(SensorReading)}.
- *
- * <p>Distances are in world units along the vehicle's direction of travel;
- * {@link Double#POSITIVE_INFINITY} means "no obstacle within sight".
- */
+/** Vehicle sensor data for one tick. */
 public record SensorReading(
         double distToVehicleAhead,
         double distToRedStop) {
