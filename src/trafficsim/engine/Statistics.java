@@ -27,7 +27,11 @@ public final class Statistics {
                 .count();
     }
 
-    /** Returns traffic totals for every direction. */
+    /**
+     * Groups vehicles by travel direction and calculates a flow summary for
+     * each group. Empty directions are included so callers can always look up
+     * all four directions without special-case null handling.
+     */
     public static Map<Direction, TrafficFlowSummary> flowByDirection(
             List<Vehicle> vehicles) {
         Objects.requireNonNull(vehicles, "Vehicle list cannot be null");

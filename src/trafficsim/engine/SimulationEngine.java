@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
 
-/** Runs the traffic simulation. */
+/**
+ * Advances traffic in fixed ticks and notifies the display after each complete update.
+ */
 public class SimulationEngine {
 
     private final RoadNetwork network;
@@ -43,6 +45,7 @@ public class SimulationEngine {
     }
 
     private void doStep() {
+        // Painting uses the same lock, so the UI never sees a half-finished tick.
         synchronized (network) {
             tickCount++;
             updateLights();
@@ -54,6 +57,8 @@ public class SimulationEngine {
         }
         notifyObservers();
     }
+
+    // -- named phase methods -------------------------------------------------
 
     private void updateLights() {
         for (Intersection intersection : network.getIntersections()) {
@@ -83,14 +88,18 @@ public class SimulationEngine {
         return all;
     }
 
+    // -- lifecycle -----------------------------------------------------------
+
     public void run() {
         running = true;
         Thread t = new Thread(() -> {
             long nextTick = System.nanoTime();
             while (running) {
+                // Convert updates per second into the time budget for one simulation tick.
                 long tickNanos = 1_000_000_000L / Math.max(1, tickRate);
                 step();
                 nextTick += tickNanos;
+                // Sleep only for the remaining budget; reset if a tick already ran late.
                 long waitNanos = nextTick - System.nanoTime();
                 if (waitNanos > 0) LockSupport.parkNanos(waitNanos);
                 else nextTick = System.nanoTime();

@@ -10,7 +10,11 @@ import trafficsim.model.road.RoadNetwork;
 import trafficsim.model.vehicle.EmergencyVehicle;
 import trafficsim.model.vehicle.Vehicle;
 
-/** Reads hazards ahead of a vehicle. */
+/**
+ * Pure read-only sensor: given a vehicle and the world, produce a
+ * {@link SensorReading} describing what's in front of the vehicle.
+ * It takes no locks and mutates nothing, so every vehicle can read the same tick snapshot.
+ */
 final class TrafficSensor {
 
     private TrafficSensor() {}
@@ -32,6 +36,7 @@ final class TrafficSensor {
         double dOccupied = nearestOccupiedIntersectionStop(v, network);
         double dEntryPriority = nearestConflictingEntryPriorityStop(v, network);
         double dIntersectionPriority = nearestEmergencyPriorityStop(v, network);
+        // One SensorReading stores only the nearest reason to stop at an intersection.
         double dStop = Math.min(Math.min(dSignal, dBlocked),
                 Math.min(Math.min(dOccupied, dEntryPriority), dIntersectionPriority));
         return new SensorReading(dVehicle, dStop);
@@ -47,6 +52,7 @@ final class TrafficSensor {
         for (Vehicle other : lane.getVehicles()) {
             if (other == self) continue;
             double centreToCentre = signedDistanceAhead(self, other.getX(), other.getY());
+            // Convert centre distance to free bumper-to-bumper space, including a safety gap.
             double noseToTail = centreToCentre - selfHalf - (other.getLength() / 2.0) - gap;
             if (centreToCentre > 0 && noseToTail < best) {
                 best = Math.max(0.0, noseToTail);
@@ -60,6 +66,7 @@ final class TrafficSensor {
         for (Intersection i : network.getIntersections()) {
             if (!i.getConnectedRoads().contains(self.getRoad())) continue;
             if (i.getLight().phaseFor(self.getDirection()) == LightPhase.GREEN) continue;
+            // The stop line is STOP_LINE_RADIUS units before the junction centre.
             double d = signedDistanceAhead(self, i.getX(), i.getY()) - SimConstants.STOP_LINE_RADIUS;
             if (d > 0 && d < best && d < SimConstants.SIGHT_RANGE) best = d;
         }
@@ -75,6 +82,7 @@ final class TrafficSensor {
         double best = Double.POSITIVE_INFINITY;
         for (Intersection i : network.getIntersections()) {
             if (!i.getConnectedRoads().contains(self.getRoad())) continue;
+            // Signal stops already hold vehicles while this approach is not green.
             if (i.getLight().phaseFor(self.getDirection()) != LightPhase.GREEN) continue;
             double signed = signedDistanceAhead(self, i.getX(), i.getY());
             if (signed <= 0 || signed > SimConstants.SIGHT_RANGE) continue;
@@ -89,11 +97,12 @@ final class TrafficSensor {
     }
 
     private static boolean downstreamIsBlocked(Vehicle self, Intersection intersection) {
+        // A vehicle in our lane whose position is *past* the intersection AND close to it AND stopped.
         Lane lane = self.getLane();
         if (lane == null) return false;
         for (Vehicle other : lane.getVehicles()) {
             if (other == self) continue;
-            if (other.getSpeed() > 1.0) continue;
+            if (other.getSpeed() > 1.0) continue; // moving = not blocking
             double d = signedDistanceAhead(self, other.getX(), other.getY());
             // Just past the intersection = between one intersection-radius past centre
             // and two intersection-radii past centre.
@@ -156,6 +165,7 @@ final class TrafficSensor {
                 if (Axis.of(lane.getDirection()) == Axis.of(self.getDirection())) continue;
                 for (Vehicle other : lane.getVehicles()) {
                     if (other == self) continue;
+                    // Count a vehicle as occupying the junction until its rear has cleared it.
                     double occupiedRadius = SimConstants.INTERSECTION_TILE_RADIUS
                             + other.getLength() / 2.0;
                     if (Math.hypot(other.getX() - intersection.getX(),
@@ -217,6 +227,7 @@ final class TrafficSensor {
                 + vehicle.getLength() / 2.0;
         double distanceFromCentre = Math.hypot(vehicle.getX() - intersection.getX(),
                 vehicle.getY() - intersection.getY());
+        // One unit also covers a vehicle that will accelerate from a near stop.
         return distanceFromCentre - occupiedRadius <= Math.max(1.0, vehicle.getSpeed());
     }
 
@@ -278,6 +289,7 @@ final class TrafficSensor {
     private static double signedDistanceAhead(Vehicle self, double px, double py) {
         double dx = px - self.getX();
         double dy = py - self.getY();
+        // Dot product: positive means ahead, negative means behind, measured along travel direction.
         return dx * self.getDirection().dx() + dy * self.getDirection().dy();
     }
 

@@ -19,6 +19,11 @@ public class Main {
 
     private static final String DEFAULT_GRID = "networks/grid.txt";
 
+    /**
+     * Args:
+     *   [network-file]      optional path; falls back to networks/grid.txt or buildDefault()
+     *   --seed=<long>       optional deterministic seed for the whole run
+     */
     public static void main(String[] args) {
         String networkPath = null;
         Long seed = null;
@@ -27,6 +32,7 @@ public class Main {
             else if (!a.startsWith("--")) networkPath = a;
         }
         long runSeed = seed != null ? seed : new SecureRandom().nextLong();
+        // Derive a separate repeatable stream for small driver slowdowns.
         Vehicle.seedNoise(runSeed ^ 0x9E3779B97F4A7C15L);
 
         RoadNetwork network;

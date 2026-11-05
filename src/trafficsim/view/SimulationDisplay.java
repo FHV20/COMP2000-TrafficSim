@@ -34,7 +34,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("serial")
+@SuppressWarnings("serial") // Swing panels are not persisted by this application.
 public final class SimulationDisplay extends JPanel implements SimulationObserver {
     private static final long serialVersionUID = 1L;
 
@@ -157,6 +157,7 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
             if (isHorizontal(direction)) {
                 shelterY += direction == Direction.EAST ? -31 : 31;
             } else {
+                // Southbound traffic is on the right side of a vertical road; northbound is on the left.
                 shelterX += direction == Direction.SOUTH ? 31 : -31;
             }
 

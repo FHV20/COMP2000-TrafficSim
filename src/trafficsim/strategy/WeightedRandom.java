@@ -27,6 +27,7 @@ public class WeightedRandom<T> {
         if (items.isEmpty()) {
             throw new IllegalStateException("no items to pick");
         }
+        // Pick a point in the combined weight range, then find the bucket containing it.
         double roll = rng.nextDouble() * totalWeight;
         double cumulative = 0.0;
         for (int i = 0; i < items.size(); i++) {

@@ -13,6 +13,7 @@ import java.util.Set;
 public final class Bus extends Vehicle {
 
     private final List<BusStop> stops = new ArrayList<>();
+    // Identity keeps separately configured stops distinct even if their values later match.
     private final Set<BusStop> servedStops =
             Collections.newSetFromMap(new IdentityHashMap<>());
     private static final double STOP_RADIUS = 8.0;
@@ -34,8 +35,10 @@ public final class Bus extends Vehicle {
         for (BusStop stop : stops) {
             if (servedStops.contains(stop)) continue;
             int[] p = stop.getPosition();
+            // Use straight-line distance so the bus can recognise the stop despite fractional movement.
             if (Math.hypot(p[0] - x, p[1] - y) < STOP_RADIUS) {
                 servedStops.add(stop);
+                // This tick already counts as the first stopped tick.
                 dwellTicksRemaining = DWELL_TICKS - 1;
                 brake();
                 return;

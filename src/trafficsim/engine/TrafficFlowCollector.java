@@ -9,7 +9,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-/** Collects traffic totals. */
+/**
+ * Collects a stream of vehicles into a traffic-flow summary in one pass.
+ */
 final class TrafficFlowCollector
         implements Collector<Vehicle, TrafficFlowCollector.Accumulator, TrafficFlowSummary> {
 
