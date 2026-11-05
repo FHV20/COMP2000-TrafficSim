@@ -276,8 +276,8 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
         String state = engine.isPaused() ? "PAUSED" : "RUNNING";
         graphics.drawString(String.format("%s  tick %,d  vehicles %d", state,
                 engine.getTickCount(), vehicles.size()), 32, 59);
-        graphics.drawString(String.format("avg speed %.2f  stopped %d",
-                Statistics.averageSpeed(vehicles), Statistics.stoppedCount(vehicles)), 32, 76);
+        graphics.drawString(String.format("avg speed %.2f  queued %d",
+                Statistics.averageSpeed(vehicles), Statistics.queuedCount(vehicles)), 32, 76);
         graphics.drawString(String.format("run seed %016X",
                 engine.getRunSeed()), 32, 94);
 

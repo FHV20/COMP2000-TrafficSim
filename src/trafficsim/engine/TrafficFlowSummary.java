@@ -6,12 +6,9 @@ package trafficsim.engine;
 public record TrafficFlowSummary(
         long totalVehicles,
         long queuedVehicles,
-        long movingVehicles,
-        double averageSpeed,
-        double minimumSpeed,
-        double maximumSpeed) {
+        double averageSpeed) {
 
     public static TrafficFlowSummary empty() {
-        return new TrafficFlowSummary(0, 0, 0, 0.0, 0.0, 0.0);
+        return new TrafficFlowSummary(0, 0, 0.0);
     }
 }

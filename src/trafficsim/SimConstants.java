@@ -30,4 +30,7 @@ public final class SimConstants {
     public static final int    ADAPTIVE_EXTEND_TICKS   = 12;  // extra green ticks per extension
     public static final int    ADAPTIVE_MAX_EXTENSIONS = 3;
 
+    // -- statistics ----------------------------------------------------------
+    public static final double QUEUED_SPEED_THRESHOLD  = 0.5; // at or below this speed a vehicle counts as queued
+
 }

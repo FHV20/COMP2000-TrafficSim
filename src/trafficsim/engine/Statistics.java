@@ -1,5 +1,6 @@
 package trafficsim.engine;
 
+import trafficsim.SimConstants;
 import trafficsim.model.vehicle.Vehicle;
 import trafficsim.util.Direction;
 
@@ -21,9 +22,10 @@ public final class Statistics {
                 .orElse(0.0);
     }
 
-    public static long stoppedCount(List<Vehicle> vehicles) {
+    /** Vehicles at or below the queued threshold, matching the per-direction totals. */
+    public static long queuedCount(List<Vehicle> vehicles) {
         return vehicles.stream()
-                .filter(v -> v.getSpeed() == 0.0)
+                .filter(v -> v.getSpeed() <= SimConstants.QUEUED_SPEED_THRESHOLD)
                 .count();
     }
 
