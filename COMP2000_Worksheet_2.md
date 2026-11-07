@@ -1,4 +1,4 @@
-# COMP2000 Worksheet 2 - Final Submission
+# COMP2000 Worksheet 2
 
 **Student name:** Iakov Dergachev
 
