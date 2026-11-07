@@ -43,6 +43,7 @@ public class SimulationEngine {
     }
 
     private void doStep() {
+        // The display takes this same lock, so it only paints completed ticks.
         synchronized (network) {
             tickCount++;
             updateLights();

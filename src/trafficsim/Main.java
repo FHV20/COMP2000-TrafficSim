@@ -19,6 +19,7 @@ public class Main {
 
     private static final String DEFAULT_GRID = "networks/grid.txt";
 
+    // Optional arguments: a network file path and --seed=<long> for a repeatable run.
     public static void main(String[] args) {
         String networkPath = null;
         Long seed = null;

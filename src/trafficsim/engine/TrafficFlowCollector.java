@@ -1,5 +1,6 @@
 package trafficsim.engine;
 
+import trafficsim.SimConstants;
 import trafficsim.model.vehicle.Vehicle;
 
 import java.util.Set;
@@ -12,8 +13,6 @@ import java.util.stream.Collector;
 /** Collects traffic totals. */
 final class TrafficFlowCollector
         implements Collector<Vehicle, TrafficFlowCollector.Accumulator, TrafficFlowSummary> {
-
-    private static final double QUEUED_SPEED_THRESHOLD = 0.5;
 
     @Override
     public Supplier<Accumulator> supplier() {
@@ -50,7 +49,7 @@ final class TrafficFlowCollector
         void add(Vehicle vehicle) {
             double speed = vehicle.getSpeed();
             vehicleCount++;
-            if (speed <= QUEUED_SPEED_THRESHOLD) queuedCount++;
+            if (speed <= SimConstants.QUEUED_SPEED_THRESHOLD) queuedCount++;
             totalSpeed += speed;
             minimumSpeed = Math.min(minimumSpeed, speed);
             maximumSpeed = Math.max(maximumSpeed, speed);
