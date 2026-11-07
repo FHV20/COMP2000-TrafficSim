@@ -265,9 +265,11 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
     private void drawDashboard(Graphics2D graphics, List<Vehicle> vehicles) {
         Map<Direction, TrafficFlowSummary> directionalFlow =
                 Statistics.flowByDirection(vehicles);
+        long cityQueued = directionalFlow.values().stream()
+                .mapToLong(TrafficFlowSummary::queuedVehicles).sum();
 
         graphics.setColor(new Color(12, 18, 23, 215));
-        graphics.fillRoundRect(18, 16, 660, 92, 14, 14);
+        graphics.fillRoundRect(18, 16, 710, 92, 14, 14);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         graphics.drawString("CITY FLOW", 32, 40);
@@ -275,8 +277,8 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
         String state = engine.isPaused() ? "PAUSED" : "RUNNING";
         graphics.drawString(String.format("%s  tick %,d  vehicles %d", state,
                 engine.getTickCount(), vehicles.size()), 32, 59);
-        graphics.drawString(String.format("avg speed %.2f  stopped %d",
-                Statistics.averageSpeed(vehicles), Statistics.stoppedCount(vehicles)), 32, 76);
+        graphics.drawString(String.format("avg speed %.2f  queued %d",
+                Statistics.averageSpeed(vehicles), cityQueued), 32, 76);
         graphics.drawString(String.format("run seed %016X",
                 engine.getRunSeed()), 32, 94);
 
@@ -287,13 +289,16 @@ public final class SimulationDisplay extends JPanel implements SimulationObserve
         graphics.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
         graphics.drawString("DIRECTIONAL FLOW", 368, 39);
         graphics.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
-        int lineY = 54;
+        String columns = "%-5s %5s %6s %6s %5s %5s %5s";
+        graphics.drawString(String.format(columns, "Dir", "Total", "Queued", "Moving", "Avg", "Min", "Max"),
+                368, 53);
+        int lineY = 65;
         for (Direction direction : Direction.values()) {
             TrafficFlowSummary flow = directionalFlow.get(direction);
-            graphics.drawString(String.format("%-5s %3d total  %3d queued  avg %5.2f",
+            graphics.drawString(String.format("%-5s %5d %6d %6d %5.2f %5.2f %5.2f",
                     direction, flow.totalVehicles(), flow.queuedVehicles(),
-                    flow.averageSpeed()), 368, lineY);
-            lineY += 13;
+                    flow.movingVehicles(), flow.averageSpeed(), flow.minimumSpeed(), flow.maximumSpeed()), 368, lineY);
+            lineY += 12;
         }
 
         graphics.setColor(new Color(12, 18, 23, 185));

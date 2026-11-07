@@ -47,6 +47,7 @@ final class TrafficSensor {
         for (Vehicle other : lane.getVehicles()) {
             if (other == self) continue;
             double centreToCentre = signedDistanceAhead(self, other.getX(), other.getY());
+            // Reserve half of each vehicle's length and the safety gap before moving.
             double noseToTail = centreToCentre - selfHalf - (other.getLength() / 2.0) - gap;
             if (centreToCentre > 0 && noseToTail < best) {
                 best = Math.max(0.0, noseToTail);

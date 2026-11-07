@@ -16,7 +16,8 @@ src/trafficsim/
   Main.java                  <- entry point (loads networks/grid.txt if present)
   SimConstants.java          <- central tuning knobs
   engine/                    <- SimulationEngine, SimulationObserver, Statistics,
-                                SensorReading, TrafficSensor, VehicleSpawner
+                                SensorReading, TrafficSensor, VehicleSpawner,
+                                TrafficFlowCollector, TrafficFlowSummary
   view/                      <- SimulationDisplay (JPanel renderer and keyboard controls)
   model/
     road/                    <- RoadNetwork, Road, Lane, BusStop, Intersection (sealed),
@@ -65,10 +66,10 @@ The dashboard displays the generated run seed. Launching normally creates a new 
 | Observer | `SimulationObserver` / `SimulationDisplay` | Week 13 |
 | State | `LightState` / `RedState` / `GreenState` / `YellowState` | Week 13 |
 | Factory | `NetworkLoader` (file + built-in default) | Week 13 |
-| Streams / lambdas | `Statistics`, network parsing, vehicle cleanup | Week 13 |
+| Streams / lambdas | `Statistics`, custom `TrafficFlowCollector`, network parsing, vehicle cleanup | Week 13 |
 | Threading | Background simulation loop with lock-protected complete updates | Week 13 |
 | Sealed hierarchies | `Vehicle`, `Intersection` | Modern Java |
-| Records | `SensorReading` | Modern Java |
+| Records | `SensorReading`, `TrafficFlowSummary` | Modern Java |
 
 ## Features
 
@@ -78,6 +79,7 @@ The dashboard displays the generated run seed. Launching normally creates a new 
 - **Bus service** — buses dwell briefly at Central Station, Museum, or University when the stop serves their lane, then continue
 - **Random traffic** — production runs randomise spawn timing, boundary lane, vehicle type, driver profile, cargo weight, and slowdown behaviour; `--seed` makes it reproducible
 - **Smooth updates** — the simulation advances atomically at 30 updates per second so rendering never sees a half-updated world
+- **Directional flow stats** — each direction shows total, queued and moving vehicles, plus average, minimum and maximum speed in world units per tick. A vehicle is queued at 0.5 or below. The city queue is the sum of the four directional queues.
 - **Adaptive signal timing** — extend green if queue exceeds threshold
 - **Australian lane placement** — vehicles spawn and travel on the left side of the road
 

@@ -49,7 +49,7 @@ public final class SignalisedIntersection extends Intersection {
             for (Lane lane : road.getLanes()) {
                 if (Axis.of(lane.getDirection()) != green) continue;
                 for (Vehicle v : lane.getVehicles()) {
-                    if (v.getSpeed() > 0.5) continue;
+                    if (v.getSpeed() > SimConstants.QUEUED_SPEED_THRESHOLD) continue;
                     double dx = v.getX() - x, dy = v.getY() - y;
                     if (Math.hypot(dx, dy) < 180) count++;
                 }

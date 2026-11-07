@@ -1,6 +1,6 @@
 package trafficsim;
 
-/** Simulation settings. */
+// Distances are in world units, speeds in world units per tick, and signal durations in ticks.
 public final class SimConstants {
 
     private SimConstants() {}
@@ -15,6 +15,8 @@ public final class SimConstants {
     public static final double STOP_LINE_RADIUS         = 52.0;
     public static final double SIGHT_RANGE              = 250.0;
     public static final double MIN_BUMPER_GAP           =  4.0;
+    public static final double QUEUED_SPEED_THRESHOLD = 0.5;
+
     // -- spawner -------------------------------------------------------------
     public static final int    SPAWN_CAP         = 40;
     public static final double SPAWN_PROBABILITY = 0.06;
