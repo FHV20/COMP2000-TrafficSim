@@ -80,7 +80,7 @@ networks/
 
 ## Submission documents
 
-- [Worksheet 2](COMP2000_Worksheet_2_Final.md)
+- [Worksheet 2](COMP2000_Worksheet_2.md)
 - [Log book, Weeks 1–13](COMP2000_Log_Book_Weeks_1-13.md)
 - [State and Observer pattern diagram](COMP2000_Pattern_Implementation_Diagram.pdf)
 
