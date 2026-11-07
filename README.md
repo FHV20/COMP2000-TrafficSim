@@ -1,91 +1,28 @@
-# COMP2000 — Traffic Simulation
+# COMP2000 Traffic Simulation
 
-A Java OOP group project simulating road traffic with vehicles, intersections, and traffic lights.
+A Java Swing traffic simulator by Henry and Jacob. Cars, trucks, buses and emergency vehicles share a grid of signalised roads. Queues form as vehicles wait for lights, leave space for the vehicle ahead or stop behind a bus.
 
-## Team
+## Run in VS Code
 
-| Name |
-|------|
-| Henry |
-| Jacob |
+1. Open the repository folder in VS Code. Use a JDK 17 or newer and the Extension Pack for Java.
+2. Open [Main.java](src/trafficsim/Main.java) and click **Run** above the `main` method.
+3. Press **Space** in the simulation window to pause or resume.
 
-## Project Structure
+With JDK 22 or newer, you can also run this from the repository folder:
 
-```
-src/trafficsim/
-  Main.java                  <- entry point (loads networks/grid.txt if present)
-  SimConstants.java          <- central tuning knobs
-  engine/                    <- SimulationEngine, SimulationObserver, Statistics,
-                                SensorReading, TrafficSensor, VehicleSpawner,
-                                TrafficFlowCollector, TrafficFlowSummary
-  view/                      <- SimulationDisplay (JPanel renderer and keyboard controls)
-  model/
-    road/                    <- RoadNetwork, Road, Lane, BusStop, Intersection (sealed),
-                                SignalisedIntersection
-    vehicle/                 <- Vehicle (sealed abstract), Car, Truck, Bus,
-                                EmergencyVehicle, DriverProfile
-    light/                   <- TrafficLight, LightState, RedState, GreenState, YellowState
-  factory/                   <- NetworkLoader
-  strategy/                  <- WeightedRandom<T>
-  util/                      <- Direction, LightPhase, Axis enums
-  exception/                 <- SimulationException, InvalidNetworkException
-networks/
-  grid.txt                   <- default demo network (3x3 signalised grid)
+```sh
+java src/trafficsim/Main.java
 ```
 
-## How to Run
+The dashboard displays the seed in hexadecimal. To repeat a run with a known decimal seed, use `java src/trafficsim/Main.java --seed=42`. The default road layout is in [grid.txt](networks/grid.txt).
 
-From the repo root:
+## Reading the dashboard
 
-**PowerShell (Windows):**
-```
-javac -d src/out (Get-ChildItem src/trafficsim -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-java -cp src/out trafficsim.Main
-```
+Each direction shows total, queued and moving vehicles, followed by average, minimum and maximum speed in world units per tick. A vehicle counts as queued at 0.5 or below. The city queue adds the four directional counts. [TrafficFlowCollector](src/trafficsim/engine/TrafficFlowCollector.java) calculates the figures for each direction and returns a [TrafficFlowSummary](src/trafficsim/engine/TrafficFlowSummary.java).
 
-**Bash / Git Bash:**
-```
-javac -d src/out $(find src/trafficsim -name "*.java")
-java -cp src/out trafficsim.Main
-```
+## Design patterns
 
-Optional args:
-- `<network-file>` — path to a network definition (defaults to `networks/grid.txt`)
-- `--seed=<long>` — deterministic RNG seed for spawning and driver slowdown
-
-Requires Java 17 or newer. The GUI shows the original 1100×700 top-down city view. Press `space` to pause or resume the simulation.
-The dashboard displays the generated run seed. Launching normally creates a new pattern; passing `--seed=<long>` deliberately repeats one.
-
-## Design Patterns
-
-| Concept | Where | Submission stage |
-|---------|-------|--------|
-| Inheritance | `Vehicle` (sealed) → `Car` / `Truck` / `Bus` / `EmergencyVehicle` | Week 7 |
-| Generics | `WeightedRandom<T>` | Week 7 |
-| Exceptions | `SimulationException` → `InvalidNetworkException` | Week 7 |
-| Observer | `SimulationObserver` / `SimulationDisplay` | Week 13 |
-| State | `LightState` / `RedState` / `GreenState` / `YellowState` | Week 13 |
-| Factory | `NetworkLoader` (file + built-in default) | Week 13 |
-| Streams / lambdas | `Statistics`, custom `TrafficFlowCollector`, network parsing, vehicle cleanup | Week 13 |
-| Threading | Background simulation loop with lock-protected complete updates | Week 13 |
-| Sealed hierarchies | `Vehicle`, `Intersection` | Modern Java |
-| Records | `SensorReading`, `TrafficFlowSummary` | Modern Java |
-
-## Features
-
-- **Straight-through traffic** — vehicles stay in their lane through every junction
-- **Collision avoidance** — vehicles keep a safe same-lane gap and wait while conflicting traffic clears a junction
-- **Emergency priority** — siren-on vehicles may pass red lights but wait for occupied crossings; conflicting traffic yields only when the emergency approach is clear
-- **Bus service** — buses dwell briefly at Central Station, Museum, or University when the stop serves their lane, then continue
-- **Random traffic** — production runs randomise spawn timing, boundary lane, vehicle type, driver profile, cargo weight, and slowdown behaviour; `--seed` makes it reproducible
-- **Smooth updates** — the simulation advances atomically at 30 updates per second so rendering never sees a half-updated world
-- **Directional flow stats** — each direction shows total, queued and moving vehicles, plus average, minimum and maximum speed in world units per tick. A vehicle is queued at 0.5 or below. The city queue is the sum of the four directional queues.
-- **Adaptive signal timing** — extend green if queue exceeds threshold
-- **Australian lane placement** — vehicles spawn and travel on the left side of the road
-
-## Communication
-
-Discord — respond when possible, notify the team if you can't make a deadline.
+`TrafficLight` delegates each phase to a `LightState`. At the end of the all-red phase, `RedState` switches the active axis before the next green. `SimulationEngine` notifies its observers after each tick, and `SimulationDisplay` requests a repaint. [State and Observer diagram](COMP2000_Pattern_Implementation_Diagram.pdf)
 
 ## AI Use Acknowledgement
 
